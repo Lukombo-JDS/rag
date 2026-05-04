@@ -1,7 +1,5 @@
-from test_main import fastapi_Client as app
 from fastapi.testclient import TestClient
-
-
+from test_main import fastapi_Client as app
 
 
 @app().get("/")
