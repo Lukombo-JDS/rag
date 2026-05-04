@@ -1,2 +1,3 @@
 # rag
-A simple rag backend with a frontend
+
+A simple rag: a backend with a frontend.
