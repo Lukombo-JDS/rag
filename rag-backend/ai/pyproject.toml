@@ -1,0 +1,12 @@
+[project]
+name = "rag-backend"
+version = "0.1.0"
+description = "basic rag by Jérémie Dos Santos LUKOMBO"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.136.1",
+    "langchain>=1.2.17",
+    "langchain-community>=0.4.1",
+    "pymilvus[milvus-lite]>=2.6.12",
+]
