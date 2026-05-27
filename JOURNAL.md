@@ -16,13 +16,19 @@ Using open-source stack for the database, vector database and packages, dependen
 ## Draft Stack
 
 Backend : 
-	- REST API : Golang
+	- REST API : Golang (Chi)
 	- AI service : FastAPI
 	- SQL DB : LibSQL
 		- ORM : Bun
 	- Vector DB : Milvus Standard
 	- AI Framework : Langchain
 	- Swagger
+
+Frontend : 
+	- nuxt4
+	- shadcn/nuxt
+	- Tailwind/CSS
+	- TS
 
 Versioning: 
 
@@ -46,13 +52,16 @@ The Backstage = Backend folder
 The Dining Area = Frontend Folder
 
 The Backstage (Backend Folder) =
-	- Control Panel = Cmd
-	- The Kitchen = Internal (or core)
+	- Control Panel = Cmd/
+	- The Kitchen = Internal/ (or core/)
 		- Stations = Domain/ Entities/
-	- The Pass = api
-	- Store Room = Infra
-		- Cold Storage = persistence
-		- pantry = cache
-	- Control room = devops
-	- Practice service = tests
-	- 
+	- The Pass = api/
+	- Store Room = Infra/
+		- Cold Storage = persistence/
+		- pantry = cache/
+	- Control room = devops/
+	- Practice service = tests/
+
+And you can apply the same logic to your "Frontend/" here aka Dining Area(I think we might inlcude the facade of the restaurant but you understand the logic here).
+
+
