@@ -20,9 +20,11 @@ type FichierArriver struct {
 
 //Action: Avoir son Contenu
 func (f *FichierArriver)AvoirContenu()string{
+
 	if f.Size > 0 {
 
 	return f.Contenu
+	
 	}
 	return "Fichier vide"
 }

@@ -2,7 +2,7 @@
 
 A simple rag backend: Golang, Milvus,libSQL and frontend: Nuxt4, Shadcn/nuxt
 
-I'm a reconvert adult who switch profession at 29yo 1year before GPT-3, and after those years of generative AI and finishing my school to became a dev (wrong period but I'm here now). I wanted to build a RAG without generative AI to strengthen my knwoledge (in case the AI bubble finally pop or the price goes high because they need to make money now),
+I'm a reconvert adult who switch profession at 29yo 1year before GPT-3, and after those years of generative AI and finishing my school to became a dev (wrong period but I'm here now). I wanted to build a RAG without generative AI to strengthen my knwoledge (in case the AI bubble finally pop or the price goes high because they need to make money now).
 
 I thought it would be nice time to time to do some simple project to juste maintain the muscles and still have some challenges.
 
