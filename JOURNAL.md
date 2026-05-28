@@ -35,7 +35,7 @@ Versioning:
 	- jujutsu over git
 
 
-## Log: 
+## Log
 
 ### 26-05-2026 - All you Need is a restaurant
 
@@ -63,5 +63,17 @@ The Backstage (Backend Folder) =
 	- Practice service = tests/
 
 And you can apply the same logic to your "Frontend/" here aka Dining Area(I think we might inlcude the facade of the restaurant but you understand the logic here).
+
+You may see some names of the folders, files, functions and variables in french, it's juste for me to understand before refactor in the more standard terms in english. -- And also some commits but through the project I will write in english.
+
+
+### 28-08-2026 - Not the Good start
+
+I'm back ! After some dicussion with a friend, he gave the advice that I should first do a simple functional code of a rag and then implemented everything step by step in monolith modular architecture more clean.
+So today I will create a folder for to create the PoC...
+
+### 2-06-2026 - I'm BACK !!
+
+After few days doing other stuff (helping others alumnis for their projects), I'm going to continue the poc. 
 
 
