@@ -7,5 +7,11 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.136.3",
     "gradio>=6.15.1",
-    "pymilvus[milvus-lite]>=3.0.0",
+    "pymilvus[milvus-lite]<3.0.0",
+    "llama-index>=0.14.22",
+    "llama-index-core>=0.14.22",
+    "llama-index-embeddings-ollama>=0.9.0",
+    "llama-index-llms-ollama>=0.10.1",
+    "llama-index-readers-file>=0.6.0",
+    "llama-index-vector-stores-milvus>=1.1.0",
 ]
