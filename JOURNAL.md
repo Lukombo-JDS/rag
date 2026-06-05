@@ -75,5 +75,25 @@ So today I will create a folder for to create the PoC...
 ### 2-06-2026 - I'm BACK !!
 
 After few days doing other stuff (helping others alumnis for their projects), I'm going to continue the poc. 
+I'm a little bit struggle to understand LlamaIndex: how to setup it is a little bit tidious, Langchain is more simple but a friend told me LlamaIndex is more fast and is more useful to be use in order to config RAG tools.
+I'm just need to read a lot. BTW the docs is very all over the place to understant how to set up the framework...
+
+
+### 5-06-2026 - Perseverance is a virtue
+
+After a lot of reads and some rookie mistaks I'm finally able to : 
+
+	- load a pdf file from a folder './poc/data/'
+	- run the embedding for that file : working
+	- Got the 
+	- and get a response from the llm after asking a simple question ! (no just kidding my ): I got a problem with LlamaIndex --> I didn't set the Dimension of the vector for the embedding model
+
+### 7-06-2026 - Bad Setups give you hiccups
+
+After setting the vectore store and embedding model the right the pipeline is working !! 
+I got the nodes scores but not the chunks retrieved. 
+I need to understand more how nodes works in LlamaIndex...
+
+### 
 
 
