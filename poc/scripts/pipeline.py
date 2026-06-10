@@ -9,7 +9,8 @@ from langchain_milvus import Milvus
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_ollama.llms import OllamaLLM
 from langchain_pymupdf4llm.pymupdf4llm_loader import PyMuPDF4LLMLoader
-from langchain_text_splitters.spacy import SpacyTextSplitter
+from langchain_text_splitters.spacy import SpacyTextSplitter 
+
 
 # Get Documnets
 

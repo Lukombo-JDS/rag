@@ -1,4 +1,5 @@
-from scripts.pipeline import output, retrievePipeline
+from scripts.pipeline import output
+
 
 
 def main():

@@ -53,7 +53,7 @@ func(vec *Vecteur)AvoirDimension()(int){
 	return vec.Dimension
 }
 
-//Action sur le vecteur: avoir la Longueur
+/Action sur le vecteur: avoir la Longueur
 func(vec *Vecteur)AvoirLongeur()(int){
 	return vec.Longueur
 }
