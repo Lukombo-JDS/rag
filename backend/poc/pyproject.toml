@@ -38,4 +38,4 @@ useLibraryCodeForTypes = true
 
 # (Optionnel) Pour éviter qu'il ne t'inonde d'avertissements sur le code des autres
 reportMissingTypeStubs = false
-reportUnknownVariables = false
+# reportUnknownVariables = false

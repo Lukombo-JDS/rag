@@ -1,5 +1,4 @@
 from typing import TypedDict
-
 from langchain_core.documents.base import Document
 from langchain_core.embeddings.embeddings import Embeddings
 from langchain_core.language_models.llms import LLM
@@ -11,15 +10,18 @@ from langchain_ollama.llms import OllamaLLM
 from langchain_pymupdf4llm.pymupdf4llm_loader import PyMuPDF4LLMLoader
 from langchain_text_splitters.spacy import SpacyTextSplitter
 
+class Config(str, Enum):
+    DEFAULT_PATH = "../data/rich-dad-poor-dad.pdf"
+    DB_URI = "./milvus_example.db"
+
+
 # Get Documnets
 
-
-def extractContents(path: str = "../data/rich-dad-poor-dad.pdf"):
+def extractContents(path: str = Config.DEFAULT_PATH):
     return iter(PyMuPDF4LLMLoader(file_path=path).lazy_load())
 
 
 # Chunking of documents content
-
 
 def chunking(contents: list[Document]) -> list[Document]:
 
@@ -30,10 +32,9 @@ def chunking(contents: list[Document]) -> list[Document]:
 
 # Init Vectore Store
 
-
 def initMilvus(embeder: Embeddings):
 
-    URI = "./milvus_example.db"
+    URI = Config.DB_URI
 
     return Milvus(
         embedding_function=embeder,
@@ -48,7 +49,6 @@ def EmbedModel():
 
 
 # Adding embed chunks to vector store
-
 
 def embeddingContents(docs: list[Document], vectorStore: Milvus):
     _ = vectorStore.add_documents(docs)
@@ -65,7 +65,6 @@ def initLLM():
 
 
 # Pipeline of the workflow of the RAG
-
 
 class PipelineInputs(TypedDict):
     request: str
