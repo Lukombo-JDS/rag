@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.136.3",
     "gradio>=6.15.1",
-    "pymilvus[milvus-lite]<3.0.0",
+    "pymilvus[milvus-lite]==2.6.9",
     "llama-index>=0.14.22",
     "llama-index-core>=0.14.22",
     "llama-index-embeddings-ollama>=0.9.0",
@@ -18,8 +18,12 @@ dependencies = [
     "langchain-community>=0.4.2",
     "langchain-pymupdf4llm>=0.5.0",
     "langchain-ollama>=1.1.0",
-    "langchain-milvus>=0.3.3",
+    "langchain-milvus==0.3.3",
     "pandas>=2.3.3",
+    "spacy>=3.8.14",
+    "rich>=15.0.0",
+    "en-core-web-sm",
+    "fr-core-news-sm",
 ]
 
 [dependency-groups]
@@ -38,4 +42,8 @@ useLibraryCodeForTypes = true
 
 # (Optionnel) Pour éviter qu'il ne t'inonde d'avertissements sur le code des autres
 reportMissingTypeStubs = false
+
+[tool.uv.sources]
+en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }
+fr-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0-py3-none-any.whl" }
 # reportUnknownVariables = false

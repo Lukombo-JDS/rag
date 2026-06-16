@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  GREETING: Shalom !
+
+tasks:
+  default:
+    desc: Salutation
+    cmds:
+      - echo {{.GREETING}}
+    silent: true
+  brouillon:
+    desc: lancer la pipeline brouillon
+    cmds:
+      - uv run python3 scripts/pipeline_brouillon.py
