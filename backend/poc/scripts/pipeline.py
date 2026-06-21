@@ -1,37 +1,35 @@
-from scripts.init import PipelineInputs
+from .init import PipelineInputs
 from langchain_core.runnables import chain
 from scripts.var import RetrievalPrompt
 from langchain_core.vectorstores import VectorStore
 from langchain_core.embeddings import Embeddings
-
+from .vectorisation import embeddingContents
+from .transformation import transformation
+from .var import DEFAULT_PATH
+from .init import OllamaLLM
 
 @chain
 def retrievePipeline(inputs: PipelineInputs):
     request: str = inputs["request"]
     vectorStore: VectorStore = inputs["vectorStore"]
     llm: OllamaLLM = inputs["llm"]
-    embedder: Embeddings = inputs["embedder"]
+    embedding_model: Embeddings = inputs["embeder"]
 
-    embeddedRequest = embedder.embed_query(request)
+    # Inject docs into Vectore store
+    vectorStore = embeddingContents(
+        transformation(DEFAULT_PATH),
+        vectorStore,
+        embedding_model
+        )
 
-    results = vectorStore.similarity_search_by_vector(
-        embedding=embeddedRequest,
-    )
-    retrieved = vectorStore.as_retriever(
-        search_type = "mmr",
-        search_kwargs = {
-            "fetch_k": 5,
-            "k": 3
-        }
-    )
+    retriever = vectorStore.as_retriever(
+        search_kwargs={"k": 50})
 
-    print("results: ", results[0])
+    results = retriever.invoke(input=request) 
 
-    context = "\n\n".join(doc.page_content for doc in retrieved)
+    context = "\n\n".join(doc.page_content for doc in results)
 
-    print("CONTEXT REMONTÉE: ",context)
+    prompt_system = RetrievalPrompt(request,context).generate_prompt()
 
-    prompt = RetrievalPrompt(request=request,context=context).generate_prompt()
-
-    for chunk in llm.stream(prompt):
+    for chunk in llm.stream(prompt_system):
         yield chunk

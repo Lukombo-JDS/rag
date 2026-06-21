@@ -6,7 +6,5 @@ from scripts.init import initMilvus
 
 # Récupérer le contenu du document
 
-def extractContents(path:str = DEFAULT_PATH)->list[Document]:
-    # print("File Path: ", )
-    
+def extractContents(path:str):
     return PyMuPDF4LLMLoader(file_path=path).lazy_load()

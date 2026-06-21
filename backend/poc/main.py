@@ -1,19 +1,15 @@
 from scripts.output import output
-from scripts.var import *
-from scripts.vectorisation import *
-from scripts.init import initLLM
+from scripts.var import DEFAULT_REQUEST
 from rich.traceback import install
 
 
 def main():
 
     install()
-    # for chunk in output():
-    #     print(chunk, end="", flush=True)
 
-    initLLM()
+    # initLLM()
 
-    output(REQUEST_DEFAULT)
+    output(DEFAULT_REQUEST)
 
 
 if __name__ == "__main__":

@@ -1,69 +1,80 @@
-from typing import TypedDict,Iterable
+from vectorisation import check_vec_norm
+from collections.abc import Iterable,Iterator
+from typing import TypedDict
+
 from langchain_core.documents.base import Document
 from langchain_core.embeddings.embeddings import Embeddings
-from langchain_core.language_models.llms import LLM
 from langchain_core.runnables import chain
-from langchain_core.vectorstores import VectorStore,VectorStoreRetriever
-from langchain_milvus.vectorstores.milvus import MilvusClient,Milvus
+from langchain_core.vectorstores.base import VectorStore
+from langchain_milvus.vectorstores.milvus import Milvus
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_ollama.llms import OllamaLLM
-from langchain_pymupdf4llm.pymupdf4llm_loader import PyMuPDF4LLMLoader
-from langchain_text_splitters.spacy import SpacyTextSplitter
-# from pymilvus.milvus_client import MilvusClient
-from var import *
+from langchain_pymupdf_layout.pymupdf_layout_loader import PyMuPDFLayoutLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from rich.traceback import install
+from vectorisation import normalization
+from var import (
+    EMBED_MODEL_NAME,
+    DB_MILVUS_URI,
+    DEFAULT_PATH,
+    EMBED_DEFAULT_MODEL_NAME,
+    EMBED_MODEL_BASE_URL,
+    EMBED_MODEL_DIM,
+    LLM_BASE_URL,
+    LLM_MODEL_NAME,
+    LLM_TEMPERATURE,
+    SPLITTER_SEPARATOR,
+    RetrievalPrompt,
+)
 
 install()
 
 
 # Get Documnets
 
-def extractContents(path:str):
-    return PyMuPDF4LLMLoader(file_path=path).lazy_load()
 
-# chunking logic 
+def extractContents(path: str):
+    # PyMuPDFLayoutLoader(file_path=path).lazy_load()
+    return PyMuPDFLayoutLoader(file_path=path).lazy_load()
 
-def chunk_logic(page_token_size:int, nb_size:int, device_capacity):
-    pass
 
 # Chunking of documents content
 
+
 def chunking(contents: Iterable[Document]) -> list[Document]:
 
-    # print("pre-chunking-docs: ", contents[:1])
+    try:
+        # tokenizer = AutoTokenizer.from_pretrained(EMBED_DEFAULT_MODEL_HF)
 
-    splitter = SpacyTextSplitter(
-        chunk_size=SPLITTER_CHUNKS,
-        chunk_overlap=SPLITTER_CHUNKS_OVERLAP,
-        max_length=SPACY_SPLITTER_MAX_LENGTH,
-        separator=SPLITTER_SEPARATOR
-        )
+        splitter = RecursiveCharacterTextSplitter(separators=SPLITTER_SEPARATOR)
+
+        # splitter.transform_documents(contents)
+
+    except Exception as err:
+        print("Chunking function ERROR: ", err)
+        exit()
 
     return splitter.split_documents(contents)
 
 
-def transformation(docs_path: str)->list[Document]:
-    return chunking(
-        extractContents(docs_path)
-    )
+def transformation(docs_path: str) -> list[Document]:
+    return chunking(extractContents(docs_path))
+
 
 # Init Vectore Store
 
-def initMilvus(embedder: Embeddings) -> MilvusClient:
-    # print("URI Milvus: ", DB_URI)
+def initMilvus() -> Milvus: 
 
-    # MC = MilvusClient(uri=DB_URI)
     try:
-
         M = Milvus(
-            embedding_function=embedder,
-            collection_name="nba_rules",
+            embedding_function=EmbedModel(),
+            collection_name="nba",
             connection_args={
-                "uri": DB_URI,  # depuis ton host
+                "uri": DB_MILVUS_URI,  # depuis ton host
                 # "uri": "http://milvus-standalone:19530",  # depuis un autre container du compose
             },
             index_params={
-                "index_type": "HNSW",
+                "index_type": "HNSW ",
                 "metric_type": "COSINE",
                 "params": {
                     "M": 64,
@@ -75,31 +86,56 @@ def initMilvus(embedder: Embeddings) -> MilvusClient:
                 "params": {"ef": 64},
             },
             consistency_level="Session",
-            drop_old=True,
+            drop_old=False,
             auto_id=True,
         )
-        return M
-    except Exception as err:
-        print(err)
-        return None
-
-
-def EmbedModel()->Embeddings:
-    return OllamaEmbeddings(model=EMBED_DEFAULT_MODEL_NAME, base_url=EMBED_MODEL_BASE_URL)
-
-
-# Adding embed chunks to vector store
-
-def embeddingContents(docs: list[Document], vectorStore: VectorStore, embeder: Embeddings)->VectorStore:
-
-    try:
-        e=embeder
-        return vectorStore.from_documents(documents=docs,embedding=e)
 
     except Exception as err:
         print(err)
-        return None
+        exit()
 
+    return M
+
+def EmbedModel() -> Embeddings:
+    model = OllamaEmbeddings(
+        model=EMBED_DEFAULT_MODEL_NAME, base_url=EMBED_MODEL_BASE_URL, dimensions=EMBED_MODEL_DIM
+    )
+
+    return model
+
+
+# Adding embeding chunks into vector store
+
+
+def embeddingContents(
+    docs: list[Document], vectorStore: VectorStore, embeder: Embeddings
+) -> VectorStore:
+
+    if not check_vec_norm(EMBED_MODEL_NAME):
+
+       try:
+            e = embeder
+            # e.embed_documents()
+            vectorStore.add_documents(documents=docs, embedding=e)
+    
+            if vectorStore.embeddings:
+    
+                vectors = vectorStore.embeddings.embed_documents(
+                    texts=[d.page_content for d in docs]
+                    )
+    
+                normed_vectors = normalization(vectors)
+    
+                initMilvus().add_embeddings(
+                    texts = [d.page_content for d in docs],
+                    embeddings = normed_vectors)
+    
+    
+       except Exception as err:
+            print(err)
+            exit()
+
+    return vectorStore
 
 
 def embeddingRequest(request: str, embeder: Embeddings) -> list[float]:
@@ -107,14 +143,11 @@ def embeddingRequest(request: str, embeder: Embeddings) -> list[float]:
 
 
 def initLLM():
-    return OllamaLLM(
-        base_url=LLM_BASE_URL,
-        model=LLM_MODEL_NAME,
-        temperature=LLM_TEMPERATURE
-    )
+    return OllamaLLM(base_url=LLM_BASE_URL, model=LLM_MODEL_NAME, temperature=LLM_TEMPERATURE)
 
 
 # Pipeline of the workflow of the RAG
+
 
 class PipelineInputs(TypedDict):
     request: str
@@ -130,52 +163,46 @@ def retrievePipeline(inputs: PipelineInputs):
     llm: OllamaLLM = inputs["llm"]
     embedding_model: Embeddings = inputs["embeder"]
 
-
     # Inject docs into Vectore store
-    vectorStore = embeddingContents(
-        transformation(DEFAULT_PATH),
-        vectorStore, 
-        embedding_model
-        )
+    vectorStore = embeddingContents(transformation(DEFAULT_PATH), vectorStore, embedding_model)
 
-    retriever = vectorStore.as_retriever(
-        search_type="mmr",
-        search_kwargs = {"k": 5,"lambda_mult":0.25}
-        )
+    retriever = vectorStore.as_retriever(search_type="similarity", search_kwargs={"k": 50})
 
     results = retriever.invoke(input=request)
 
-    print("DOCS FOUND: ", results[0])
-
     context = "\n\n".join(doc.page_content for doc in results)
-    # score = "\n\n".join(doc.score for doc in results)
 
-    print("CONTEXT DOCS: ",context)
-
-    prompt_system = RetrievalPrompt(request,context).generate_prompt()
+    prompt_system = RetrievalPrompt(request, context).generate_prompt()
 
     for chunk in llm.stream(prompt_system):
-        # print("!!!! chunks found:  ", chunk)
         yield chunk
 
 
-def output(request: str, embedding_model: Embeddings):
-    db_vectoriel = initMilvus(embedding_model)
+#TODO: créer une chaine séquentielle
+def run(request: str, embedding_model: Embeddings):
+
+    db_vectoriel = initMilvus()
+
+    llm = initLLM()
 
     inputs: PipelineInputs = {
         "request": request,
         "embeder": embedding_model,
         "vectorStore": db_vectoriel,
-        "llm": initLLM(),
+        "llm": llm,
     }
     print("Hello from poc!")
     print("Vector DB ready!")
 
-    for chks in retrievePipeline.stream(inputs):
+    return retrievePipeline.stream(inputs)
 
+def output(Pipeline: Iterator[str]):
+    for chks in Pipeline:
         print(chks, end="", flush=True)
 
 
 embed_model = EmbedModel()
 
-output("Cite me 3 faults in this document", embed_model)
+output(
+    run("the subject of the document", embed_model)
+)

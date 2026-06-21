@@ -1,29 +1,32 @@
 from langchain_core.vectorstores import VectorStore
 from langchain_text_splitters.spacy import SpacyTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from scripts.var import *
+from typing import Iterable
+from scripts.extraction import extractContents
 
 
-# Adding embed chunks to vector store
+# chunking logic 
 
-def embeddingContents(docs: list[Document], vectorStore: VectorStore):
-    print("DOCS: ", docs[:2])
-    print("DOCS size: ", len(docs))
-    _ = vectorStore.add_documents(docs)
+def chunk_logic(page_token_size:int, nb_size:int, device_capacity):
+    pass
 
-def chunking(contents: list[Document]) -> list[Document]:
 
-    splitter = SpacyTextSplitter(
-        separator="\n\n",
-        chunk_overlap=SPLITTER_CHUNKS_OVERLAP,
-        chunk_size=SPLITTER_CHUNKS,
-        max_length=SPACY_SPLITTER_MAX_LENGTH
+def chunking(contents: Iterable[Document]) -> list[Document]:
+
+    # print("pre-chunking-docs: ", contents[:1])
+
+    splitter = RecursiveCharacterTextSplitter(
+            chunk_size=SPLITTER_CHUNKS,
+            chunk_overlap=SPLITTER_CHUNKS_OVERLAP,
+            separators=["\n\n"]
         )
 
     return splitter.split_documents(contents)
 
 
-def injestion(contents: list[Document], vectorStore: VectorStore):
-    chunked = chunking(contents)
-
-    embeddingContents(chunked, vectorStore)
+def transformation(docs_path: str)->list[Document]:
+    return chunking(
+        extractContents(docs_path)
+    )

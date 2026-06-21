@@ -58,6 +58,30 @@ Ajout de Taskfile pour créer des commandes courtes et des tâches récurrentes
 j'ai eu un soucis avec la version : issue sur les verison de "langchain_milvus >= 2.9.0" --> la class Milvus n'arrive pas à se connecter via URI à milvus qui tourne dans le docker-compose en local dans ma machine.
 Résolution : fixer la version à 2.9.0 car le problème survient dès >= 2.9.0.
 
+### 21 - Juin - 2026 | Une histoire de vectorisation
+
+J'ai eu des soucis sur la qualité des réponses du RAG sur des questions qui demande de la recherche parmis l'ensemble du document.
+
+### 24 - Juin - 2026 | Une étape fini
+
+fix: 
+
+J'ai corriger la qualité du rag en mettant la 'similarity' comme type de recherche et en mettant un 'k' à 50 : pour faire remonter le plus de documents selon les cherches 'globaux':
+
+Un question qui demande une recherche qui doit parcourir l'ensemble des chunks demande beaucoup de documents remontés. Peut être amélioré:
+
+- passer à une recherche MMR avec une valeur de *lambda* assez petite pour faire remonter des documents assez variés et l'associer avec un prompt spécifique quand le LLM n'arrive pas à faire une réponse très proche de la requête.
+
+- Avec LangGraph faire une des arrêtes et des nodes qui permet de faire différentes type de recherche selon ce que l'agent de selection de type de recherches trouve utilise selon la requête.
+
+feat: 
+
+J'ai Amélioré la vectorisation: je vérifie si le model de vectorisation donne des vecteurs normalisés sinon on normalisés les vecteurs avant de les injectés dans la BD vectorielle.
+
+
+Vérification de la dimension pour faire des chunks plus appropriés par rapport aux models. Il y'a des models open source dont la dimension des vecteurs n'est pas donnée pour vérifier la dimension j'ai ajouté un petit script de vérification pour obtenir la longueur des vecteurs.
+
+
 
 
 
